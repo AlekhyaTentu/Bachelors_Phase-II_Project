@@ -1,57 +1,58 @@
-Project Title: Robust Single-Image Super-Resolution Via CNN’s And TV-TV Minimization
 
-Description:
 
-This project focuses on implementing a robust single-image super-resolution technique using convolutional neural networks (CNNs) and TV-TV minimization. Single-image super-resolution is the process of increasing the resolution of an image, obtaining a high-resolution (HR) image from a low-resolution (LR) one. By leveraging large training datasets, CNNs currently achieve state-of-the-art performance in this task. However, during testing/deployment, they fail to enforce consistency between the HR and LR images. To address this issue, we propose post-processing the CNN outputs with an optimization problem called TV-TV minimization, which enforces consistency.
+---
 
-Documentation:
+# Robust Single-Image Super-Resolution (SISR) via Hybrid CNN-TV Optimization
 
-The project documentation is available in the PDF file included in this repository. It covers the following sections:
+**Advanced Computer Vision | Department of ECE | Malla Reddy Engineering College**
 
-CHAPTER 1- INTRODUCTION
-What is Image Resolution?
-Need for Resolution Enhancement
-Super – Resolution Concept
-Super Resolution Technique
-The idea to get HR image to Multiple LR image
-CHAPTER 2 - LITERATURE REVIEW
-Bicubic Interpolation
-Multi-image Super-Resolution
-Single-image Super-Resolution
-Self-similarity based SISR
-Reconstruction based SR
-Learning-Based algorithms
-Plug-and-Play Methods
-CHAPTER 3 - EXISTING METHOD
-Bicubic Interpolation
-Multi-image Super-Resolution
-Single-image Super-Resolution
-Self-similarity based SISR
-Reconstruction based SR
-Learning-Based algorithms
-Plug-and-Play Methods
-CHAPTER 4 – PROPOSED METHOD
-Proposed Model
-Our Framework
-Algorithm for TV-TV Minimization
-Source Code
-CHAPTER 5 – RESULT ANALYSIS
-Experimental Setup
-Measurement Inconsistency of CNN’s
-Robustness to Operator Mismatch
-Quantitative Results
-Qualitative Results
-CHAPTER 6- CONCLUSION
-Conclusion
-Future Scope
-REFERENCES
-Usage:
+## 📌 Executive Summary
 
-To access the project documentation, simply download the PDF file and refer to the relevant sections for detailed information.
+While State-of-the-Art (SOTA) Convolutional Neural Networks (CNNs) like EDSR and RCAN achieve high PSNR values, they often lack **Measurement Consistency**. If the reconstructed high-resolution (HR) image is down-sampled, it frequently fails to match the original low-resolution (LR) input, especially under "Operator Mismatch" (e.g., training on Bicubic but testing on Box-averaging).
 
-Contact Information:
+This repository implements a **Post-Processing Framework** that bridges Data-Driven (CNN) and Model-Based (Optimization) methods. By utilizing **Total Variation (TV-TV) Minimization** solved via the **Alternating Direction Method of Multipliers (ADMM)**, we enforce physical consistency and suppress artifacts, resulting in superior morphological reconstruction.
 
-For any inquiries or further information, feel free to contact:
+## 📂 System Architecture
 
-Alekhya Tentu
-Email: alekhyatentu2002@gmail.com
+```text
+├── docs/
+│   └── Phase_2_Technical_Report.pdf  # Comprehensive mathematical proofs
+├── simulation/
+│   ├── admm_convergence_plots.png    # Residual error reduction over iterations
+│   └── quality_metrics_comparison.png # PSNR/SSIM Delta (CNN vs. Hybrid)
+├── src/
+│   ├── admm_optimizer.m              # Core ADMM implementation for TV-TV
+│   └── cnn_inference_wrapper.py      # Interface for EDSR/RCAN priors
+└── README.md
+
+```
+
+## 🛠️ Technical Specifications & Toolchain
+
+* **Optimization Meta-Heuristic:** ADMM (Alternating Direction Method of Multipliers).
+* **Deep Learning Priors:** RCAN (Residual Channel Attention Networks), EDSR (Enhanced Deep Residual Networks).
+* **Regularization:** Dual-term Total Variation (TV) for edge preservation and noise suppression.
+* **Metric Suite:** Peak Signal-to-Noise Ratio (PSNR), Structural Similarity Index (SSIM).
+
+## ⚙️ Mathematical Framework
+
+The system treats the CNN output ($w$) as a structural prior and solves a constrained optimization problem to find the optimal HR image ($x$):
+
+### **Objective Function:**
+
+$$\min_{x} \text{TV}(x) + \beta \text{TV}(x - w) \quad \text{s.t. } Ax = b$$
+
+**Where:**
+
+* $Ax = b$ represents the **Measurement Consistency Constraint** (Down-sampling fidelity).
+* $\text{TV}(x)$ enforces **Sparsity** in the gradient domain (preserving edges).
+* $\beta \text{TV}(x - w)$ ensures **Fidelity** to the deep-learning learned features.
+
+## 🚀 Key Impacts & Engineering Breakthroughs
+
+* **Operator Robustness:** Demonstrated that the hybrid model maintains reconstruction integrity even when the down-sampling kernel $A$ is unknown or mismatched during training.
+* **Artifact Suppression:** Significantly reduced "ringing" artifacts and checkerboard patterns commonly introduced by pure CNN up-sampling layers.
+* **Global Convergence:** Implemented an efficient ADMM solver that processes the entire image manifold rather than local patches, ensuring global consistency.
+
+---
+
