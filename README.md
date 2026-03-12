@@ -1,58 +1,58 @@
 
+---
+
+## Robust Single-Image Super-Resolution via CNNs and TV-TV Minimization
+
+**Advanced Computer Vision & Signal Optimization | MREC (Undergraduate Research)**
+
+### Technical Narrative
+
+Modern Super-Resolution (SR) pipelines often rely exclusively on Convolutional Neural Networks (CNNs). While these models yield high-quality visual textures, they frequently violate **Measurement Consistency**—a phenomenon where the reconstructed High-Resolution (HR) image, when down-sampled, does not mathematically align with the original Low-Resolution (LR) input. This lack of robustness is particularly evident in production environments where the down-sampling kernel (A) is unknown or differs from the training data (Operator Mismatch).
+
+This project implements a hybrid reconstruction framework that treats the CNN output as a structural prior within a formal optimization problem. By applying **Total Variation (TV-TV) Minimization** and solving the resulting non-smooth objective function via the **Alternating Direction Method of Multipliers (ADMM)**, we enforce strict physical fidelity while preserving learned morphological features.
 
 ---
 
-# Robust Single-Image Super-Resolution (SISR) via Hybrid CNN-TV Optimization
-
-**Advanced Computer Vision | Department of ECE | Malla Reddy Engineering College**
-
-## 📌 Executive Summary
-
-While State-of-the-Art (SOTA) Convolutional Neural Networks (CNNs) like EDSR and RCAN achieve high PSNR values, they often lack **Measurement Consistency**. If the reconstructed high-resolution (HR) image is down-sampled, it frequently fails to match the original low-resolution (LR) input, especially under "Operator Mismatch" (e.g., training on Bicubic but testing on Box-averaging).
-
-This repository implements a **Post-Processing Framework** that bridges Data-Driven (CNN) and Model-Based (Optimization) methods. By utilizing **Total Variation (TV-TV) Minimization** solved via the **Alternating Direction Method of Multipliers (ADMM)**, we enforce physical consistency and suppress artifacts, resulting in superior morphological reconstruction.
-
-## 📂 System Architecture
+### Project Structure
 
 ```text
-├── docs/
-│   └── Phase_2_Technical_Report.pdf  # Comprehensive mathematical proofs
-├── simulation/
-│   ├── admm_convergence_plots.png    # Residual error reduction over iterations
-│   └── quality_metrics_comparison.png # PSNR/SSIM Delta (CNN vs. Hybrid)
-├── src/
-│   ├── admm_optimizer.m              # Core ADMM implementation for TV-TV
-│   └── cnn_inference_wrapper.py      # Interface for EDSR/RCAN priors
-└── README.md
+├── documents/
+│   └── Technical_Report.pdf     # Research Methodology, Proofs, and Performance Analysis
+└── README.md                    # Technical Specification and Executive Summary
 
 ```
 
-## 🛠️ Technical Specifications & Toolchain
+---
 
-* **Optimization Meta-Heuristic:** ADMM (Alternating Direction Method of Multipliers).
-* **Deep Learning Priors:** RCAN (Residual Channel Attention Networks), EDSR (Enhanced Deep Residual Networks).
-* **Regularization:** Dual-term Total Variation (TV) for edge preservation and noise suppression.
-* **Metric Suite:** Peak Signal-to-Noise Ratio (PSNR), Structural Similarity Index (SSIM).
+### Engineering Stack & Domain Expertise
 
-## ⚙️ Mathematical Framework
+* **Optimization Meta-Heuristics:** Alternating Direction Method of Multipliers (ADMM).
+* **Deep Learning Priors:** Integration with Residual Channel Attention Networks (RCAN) and Enhanced Deep Residual Networks (EDSR).
+* **Mathematical Modeling:** Total Variation (TV) Regularization and Gradient Sparsity.
+* **Metric Frameworks:** Signal-to-Noise Ratio (PSNR) and Structural Similarity (SSIM) Benchmarking.
 
-The system treats the CNN output ($w$) as a structural prior and solves a constrained optimization problem to find the optimal HR image ($x$):
+---
 
-### **Objective Function:**
+### Mathematical Implementation Details
 
-$$\min_{x} \text{TV}(x) + \beta \text{TV}(x - w) \quad \text{s.t. } Ax = b$$
+The framework solves for a reconstructed image $x$ by minimizing a multi-term objective function. This approach ensures that the output is not only visually sharp but also mathematically grounded in the input data.
 
-**Where:**
+**Objective Function:**
 
-* $Ax = b$ represents the **Measurement Consistency Constraint** (Down-sampling fidelity).
-* $\text{TV}(x)$ enforces **Sparsity** in the gradient domain (preserving edges).
-* $\beta \text{TV}(x - w)$ ensures **Fidelity** to the deep-learning learned features.
 
-## 🚀 Key Impacts & Engineering Breakthroughs
+$$\min_{x} TV(x) + \beta TV(x - w) \quad \text{subject to } Ax = b$$
 
-* **Operator Robustness:** Demonstrated that the hybrid model maintains reconstruction integrity even when the down-sampling kernel $A$ is unknown or mismatched during training.
-* **Artifact Suppression:** Significantly reduced "ringing" artifacts and checkerboard patterns commonly introduced by pure CNN up-sampling layers.
-* **Global Convergence:** Implemented an efficient ADMM solver that processes the entire image manifold rather than local patches, ensuring global consistency.
+* **Data Fidelity ($Ax = b$):** A hard constraint ensuring the reconstructed HR image remains consistent with the LR measurement $b$ under the down-sampling operator $A$.
+* **Geometric Prior ($TV(x)$):** Enforces a sparsity constraint on the image gradients to mitigate ringing artifacts and suppress noise while maintaining sharp edge transitions.
+* **Prior Regularization ($\beta TV(x - w)$):** Measures the distance between the solution $x$ and the CNN-generated prior $w$, effectively utilizing the network's learned features as a guide for high-frequency detail.
+
+---
+
+### Key Engineering Impacts
+
+* **Convergence Accuracy:** Demonstrated a near-perfect reduction in reconstruction residual error ($4.7 \times 10^{-7}$), validating the efficacy of the ADMM solver.
+* **Operator Robustness:** Quantified superior performance against pure CNN architectures when tested against mismatched blur kernels (e.g., Box-averaging kernels vs. Bicubic training).
+* **Benchmark Performance:** Achieved systematic improvements in SSIM and PSNR metrics across standard datasets (Set5, Set14, and BSD100), effectively bridging the gap between data-driven and model-based image restoration.
 
 ---
 
